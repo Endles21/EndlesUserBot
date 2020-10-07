@@ -43,4 +43,4 @@ Herhangi bir istek & şikâyet & öneri varsa [destek grubuna](https://t.me/Endl
 ## Credit
 [PaperPlane Repo](https://github.com/RaphielGang/Telegram-Paperplane)
 [Çeviri İçin TeamDerUntergang Ekibine Teşekkürler](https://github.com/TeamDerUntergang/Telegram-UserBot)
-[Bu Proje Boyunca Yardım Ettiğin için Teşekkürler BristolMyers](https://github.com/BristolMyers)
+[Teşekkürler  BristolMyers](https://github.com/BristolMyers)
