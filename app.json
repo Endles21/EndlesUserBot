@@ -11,8 +11,7 @@
     "productivity"
   ],
   "repository": "https://github.com/Endles21/EndlesUserbot",
- 
- "success_url": "https://t.me/EndlesSupport",
+  "success_url": "https://t.me/EndlesSupport",
   "stack": "container",
   "env": {
     "API_KEY": {
