@@ -23,7 +23,7 @@
       "required": true
     },
     "PLUGIN_CHANNEL_ID": {
-      "description": "Pluginleri yeniden yüklemek için bu değer lazımdır. Almak için Telegramın arama kısmına @EndlesSupport Yazın.",
+      "description": "Pluginleri yeniden yüklemek için bu değer lazımdır. Almak için Telegramın arama kısmına @EndlesUserBot Yazın.",
       "required": true
     },
     "STRING_SESSION": {
@@ -82,7 +82,7 @@
       "value": "False"
     },
     "BOT_USERNAME": {
-      "description": "Inline bot özelliğinin çalışması için gereklidir. Buraya botunuzun kullanıcı adınız yazmanız lazım (Örnek: @Endles21Bot). Botunuz yok ise @BotFather yardımı ile bot oluşturabilirsiniz.",
+      "description": "Inline bot özelliğinin çalışması için gereklidir. Buraya botunuzun kullanıcı adınız yazmanız lazım (Örnek: @EndlesBot). Botunuz yok ise @BotFather yardımı ile bot oluşturabilirsiniz.",
       "required": false
     },
     "BOT_TOKEN": {
