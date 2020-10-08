@@ -11,6 +11,7 @@
     "productivity"
   ],
   "repository": "https://github.com/Endles21/EndlesUserbot",
+  "website":   "https://Endles21.tech",
   "success_url": "https://t.me/EndlesSupport",
   "stack": "container",
   "env": {
