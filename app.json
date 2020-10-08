@@ -1,7 +1,7 @@
 {
   "name": "UserBot",
   "description": "Endles UserBot",
-  "logo": "https://i.imgyukle.com/2020/06/01/yKsagc.jpg",
+  "logo": "https://i.imgyukle.com/2020/09/18/x6quk6.jpg",
   "keywords": [
     "telegram",
     "userbot",
@@ -82,7 +82,7 @@
       "value": "False"
     },
     "BOT_USERNAME": {
-      "description": "Inline bot özelliğinin çalışması için gereklidir. Buraya botunuzun kullanıcı adınız yazmanız lazım (Örnek: @PoyrazBot). Botunuz yok ise @BotFather yardımı ile bot oluşturabilirsiniz.",
+      "description": "Inline bot özelliğinin çalışması için gereklidir. Buraya botunuzun kullanıcı adınız yazmanız lazım (Örnek: @Endles21Bot). Botunuz yok ise @BotFather yardımı ile bot oluşturabilirsiniz.",
       "required": false
     },
     "BOT_TOKEN": {
