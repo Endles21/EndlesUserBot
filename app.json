@@ -23,7 +23,7 @@
       "required": true
     },
     "PLUGIN_CHANNEL_ID": {
-      "description": "Pluginleri yeniden yüklemek için bu değer lazımdır. Almak için Telegramın arama kısmına @EndlesUserBot Yazın.",
+      "description": "Pluginleri yeniden yüklemek için bu değer lazımdır. Almak için Telegramın arama kısmına @EndlesSupport Yazın.",
       "required": true
     },
     "STRING_SESSION": {
@@ -61,7 +61,7 @@
     "TZ": {
       "description": "Bunun ne işe yaradığı hakkında fikrin yoksa kurcalama :)",
       "value": "Europe/Istanbul",
-      "required": true
+      "required": true  
     },
     "CHROME_DRIVER": {
       "description": "Selenium tabanlı modüller için ChromeDriver konumu.",
@@ -82,12 +82,12 @@
       "value": "False"
     },
     "BOT_USERNAME": {
-      "description": "Inline bot özelliğinin çalışması için gereklidir. Buraya botunuzun kullanıcı adınız yazmanız lazım (Örnek: @EndlesBot). Botunuz yok ise @BotFather yardımı ile bot oluşturabilirsiniz.",
-      "required": false
+      "description": "Inline bot özelliğinin çalışması için gereklidir. Buraya botunuzun kullanıcı adınız yazmanız lazım (Örnek: @Endles21Bot). Botunuz yok ise @BotFather yardımı ile bot oluşturabilirsiniz.",
+      "required": false  
     },
     "BOT_TOKEN": {
       "description": "Inline bot özelliğinin çalışması için gereklidir. Buraya botunuzun tokenini yazmanız lazım. Botunuz yok ise @BotFather yardımı ile bot oluşturabilirsiniz.",
-      "required": false
+      "required": false    
     },
     "GENIUS": {
       "description": "Buraya aldığınız Genius API Token'i yazın.",
@@ -95,7 +95,7 @@
     },
     "AUTO_PP": {
       "description": "Autopp modülünün çalışması için gerekli olan değişkendir. Çalışması için kullanacağınız resmin direk adresini girmeniz gerekiyor.",
-      "required": false
+      "required": false      
     },
     "BOTLOG_CHATID": {
       "description": "Günlük grubunun ChatID'si. BOTLOG= False ve / veya LOGSPAMMER= False ise '0' olarak ayarlayın.",
@@ -190,7 +190,7 @@
   "addons": [{
     "plan": "heroku-postgresql",
     "options": {
-      "version": "12"
+      "version": "9.5"
     }
   }],
   "buildpacks": [{
