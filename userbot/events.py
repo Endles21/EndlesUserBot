@@ -59,11 +59,7 @@ def register(**args):
 
     def decorator(func):
         async def wrapper(check):
-            if not LOGSPAMMER:
-                send_to = check.chat_id
-            else:
-                send_to = BOTLOG_CHATID
-
+            send_to = check.chat_id if not LOGSPAMMER else BOTLOG_CHATID
             if not trigger_on_fwd and check.fwd_from:
                 return
 
@@ -126,10 +122,8 @@ def register(**args):
 
                     ftext += result
 
-                    file = open("error.log", "w+")
-                    file.write(ftext)
-                    file.close()
-
+                    with open("error.log", "w+") as file:
+                        file.write(ftext)
                     if LOGSPAMMER:
                         await check.client.respond("`Üzgünüm, UserBot'um çöktü.\
                         \nHata günlükleri UserBot günlük grubunda saklanır.`")
@@ -138,8 +132,6 @@ def register(**args):
                                                  "error.log",
                                                  caption=text)
                     remove("error.log")
-            else:
-                pass
         if not disable_edited:
             bot.add_event_handler(wrapper, events.MessageEdited(**args))
         bot.add_event_handler(wrapper, events.NewMessage(**args))

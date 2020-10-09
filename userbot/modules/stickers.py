@@ -231,7 +231,6 @@ async def dizla(args):
 async def resize_photo(photo):
     """ Fotoğrafı 512x512 boyutuna getirir. """
     image = Image.open(photo)
-    maxsize = (512, 512)
     if (image.width and image.height) < 512:
         size1 = image.width
         size2 = image.height
@@ -248,6 +247,7 @@ async def resize_photo(photo):
         sizenew = (size1new, size2new)
         image = image.resize(sizenew)
     else:
+        maxsize = (512, 512)
         image.thumbnail(maxsize)
 
     return image

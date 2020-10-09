@@ -16,9 +16,7 @@ from userbot import CMD_HELP, LOGS, GENIUS
 
 @register(outgoing=True, pattern="^.lyrics(?: |$)(.*)")
 async def lyrics(lyric):
-    if r"-" in lyric.text:
-        pass
-    else:
+    if r"-" not in lyric.text:
         await lyric.edit("`Hata: lütfen <sanatçı> ve <şarkı> için bölücü olarak '-' kullanın`\n"
                          "Örnek: `Stabil - Reenkarne`")
         return
@@ -67,9 +65,7 @@ async def lyrics(lyric):
 
 @register(outgoing=True, pattern="^.singer(?: |$)(.*)")
 async def singer(lyric):
-    if r"-" in lyric.text:
-        pass
-    else:
+    if r"-" not in lyric.text:
         await lyric.edit("`Hata: lütfen <sanatçı> ve <şarkı> için bölücü olarak '-' kullanın`\n"
                          "Örnek: `Duman - Haberin Yok Ölüyorum`")
         return

@@ -135,9 +135,7 @@ async def promote(promt):
     user, rank = await get_user_from_event(promt)
     if not rank:
         rank = "Yönetici"  # Her ihtimale karşı.
-    if user:
-        pass
-    else:
+    if not user:
         return
 
     # Geçerli kullanıcı yönetici veya sahip ise tanıtmaya çalışalım
@@ -177,9 +175,7 @@ async def demote(dmod):
     rank = "admeme"  # Burayı öylesine yazdım
     user = await get_user_from_event(dmod)
     user = user[0]
-    if user:
-        pass
-    else:
+    if not user:
         return
 
     # Yetki düşürme sonrası yeni izinler
@@ -222,9 +218,7 @@ async def ban(bon):
         return
 
     user, reason = await get_user_from_event(bon)
-    if user:
-        pass
-    else:
+    if not user:
         return
 
     # Eğer kullanıcı sudo ise
@@ -283,9 +277,7 @@ async def nothanos(unbon):
 
     user = await get_user_from_event(unbon)
     user = user[0]
-    if user:
-        pass
-    else:
+    if not user:
         return
 
     try:
@@ -325,9 +317,7 @@ async def spider(spdr):
         return
 
     user, reason = await get_user_from_event(spdr)
-    if user:
-        pass
-    else:
+    if not user:
         return
 
     # Eğer kullanıcı sudo ise
@@ -398,9 +388,7 @@ async def unmoot(unmot):
     await unmot.edit('```EndlesBot Kullanıcıyı Sessizden çıkartıyor...```')
     user = await get_user_from_event(unmot)
     user = user[0]
-    if user:
-        pass
-    else:
+    if not user:
         return
 
     if unmute(unmot.chat_id, user.id) is False:
@@ -480,9 +468,7 @@ async def ungmoot(un_gmute):
 
     user = await get_user_from_event(un_gmute)
     user = user[0]
-    if user:
-        pass
-    else:
+    if not user:
         return
 
     await un_gmute.edit('```EndlesBot Tarafından Küresel susturma kaldırılıyor...```')
@@ -521,9 +507,7 @@ async def gspider(gspdr):
         return
 
     user, reason = await get_user_from_event(gspdr)
-    if user:
-        pass
-    else:
+    if not user:
         return
 
     # Eğer kullanıcı sudo ise
@@ -620,7 +604,7 @@ async def rm_deletedacc(show):
 async def get_admin(show):
     """ .admins komutu girilen gruba ait yöneticileri listeler """
     info = await show.client.get_entity(show.chat_id)
-    title = info.title if info.title else "this chat"
+    title = info.title or "this chat"
     mentions = f'<b>{title} grubunun yöneticileri:</b> \n'
     try:
         async for user in show.client.iter_participants(
@@ -734,16 +718,10 @@ async def kick(usr):
 async def get_users(show):
     """ .users komutu girilen gruba ait kişileri listeler """
     info = await show.client.get_entity(show.chat_id)
-    title = info.title if info.title else "this chat"
+    title = info.title or "this chat"
     mentions = '{} grubunda bulunan kişiler: \n'.format(title)
     try:
-        if not show.pattern_match.group(1):
-            async for user in show.client.iter_participants(show.chat_id):
-                if not user.deleted:
-                    mentions += f"\n[{user.first_name}](tg://user?id={user.id}) `{user.id}`"
-                else:
-                    mentions += f"\nSilinen hesap `{user.id}`"
-        else:
+        if show.pattern_match.group(1):
             searchq = show.pattern_match.group(1)
             async for user in show.client.iter_participants(
                     show.chat_id, search=f'{searchq}'):
@@ -751,6 +729,12 @@ async def get_users(show):
                     mentions += f"\n[{user.first_name}](tg://user?id={user.id}) `{user.id}`"
                 else:
                     mentions += f"\nSilinen hesap `{user.id}`"
+        else:
+            async for user in show.client.iter_participants(show.chat_id):
+                if user.deleted:
+                    mentions += f"\nSilinen hesap `{user.id}`"
+                else:
+                    mentions += f"\n[{user.first_name}](tg://user?id={user.id}) `{user.id}`"
     except Exception as err:
         mentions += " " + str(err) + "\n"
     try:
@@ -758,9 +742,8 @@ async def get_users(show):
     except MessageTooLongError:
         await show.edit(
             "Lanet olsun, bu büyük bir grup. Kullanıcı listesini dosya olarak gönderiyorum.")
-        file = open("userslist.txt", "w+")
-        file.write(mentions)
-        file.close()
+        with open("userslist.txt", "w+") as file:
+            file.write(mentions)
         await show.client.send_file(
             show.chat_id,
             "userslist.txt",
@@ -774,7 +757,7 @@ async def get_user_from_event(event):
     """ Kullanıcıyı argümandan veya yanıtlanan mesajdan alın. """
     args = event.pattern_match.group(1).split(' ', 1)
     extra = None
-    if event.reply_to_msg_id and not len(args) == 2:
+    if event.reply_to_msg_id and len(args) != 2:
         previous_message = await event.get_reply_message()
         user_obj = await event.client.get_entity(previous_message.from_id)
         extra = event.pattern_match.group(1)
@@ -824,7 +807,7 @@ async def get_user_from_id(user, event):
 async def get_usersdel(show):
     """ .usersdel komutu grup içinde ki silinen hesapları gösterir """
     info = await show.client.get_entity(show.chat_id)
-    title = info.title if info.title else "this chat"
+    title = info.title or "this chat"
     mentions = '{} grubunda bulunan silinmiş hesaplar: \n'.format(title)
     try:
         if not show.pattern_match.group(1):
@@ -848,9 +831,8 @@ async def get_usersdel(show):
     except MessageTooLongError:
         await show.edit(
             "Lanet olsun, bu büyük bir grup. Silinen kullanıcılar listesini dosya olarak gönderiyorum.")
-        file = open("userslist.txt", "w+")
-        file.write(mentions)
-        file.close()
+        with open("userslist.txt", "w+") as file:
+            file.write(mentions)
         await show.client.send_file(
             show.chat_id,
             "deleteduserslist.txt",
@@ -864,7 +846,7 @@ async def get_userdel_from_event(event):
     """ Silinen kullanıcıyı argümandan veya yanıtlanan mesajdan alın. """
     args = event.pattern_match.group(1).split(' ', 1)
     extra = None
-    if event.reply_to_msg_id and not len(args) == 2:
+    if event.reply_to_msg_id and len(args) != 2:
         previous_message = await event.get_reply_message()
         user_obj = await event.client.get_entity(previous_message.from_id)
         extra = event.pattern_match.group(1)
@@ -914,7 +896,7 @@ async def get_userdel_from_id(user, event):
 async def get_bots(show):
     """ .bots komutu gruba ait olan botları listeler """
     info = await show.client.get_entity(show.chat_id)
-    title = info.title if info.title else "this chat"
+    title = info.title or "this chat"
     mentions = f'<b> {title} grubunda bulunan botlar:</b>\n'
     try:
        # if isinstance(message.to_id, PeerChat):
@@ -936,9 +918,8 @@ async def get_bots(show):
     except MessageTooLongError:
         await show.edit(
             "Lanet olsun, burada çok fazla bot var. Botların listesini dosya olarak gönderiyorum.")
-        file = open("botlist.txt", "w+")
-        file.write(mentions)
-        file.close()
+        with open("botlist.txt", "w+") as file:
+            file.write(mentions)
         await show.client.send_file(
             show.chat_id,
             "botlist.txt",

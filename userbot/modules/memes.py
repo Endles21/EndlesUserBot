@@ -433,17 +433,15 @@ async def slap(replied_user, event):
     hit = choice(HIT)
     throw = choice(THROW)
 
-    caption = "Seden " + temp.format(
+    return "Seden " + temp.format(
         victim=slapped, item=item, hits=hit, throws=throw)
-
-    return caption
 
 
 @register(outgoing=True, pattern="^-_-$", ignore_unsafe=True)
 async def lol(lel):
     """ Tamam... """
     okay = "-_-"
-    for i in range(10):
+    for _ in range(10):
         okay = okay[:-1] + "_-"
         await lel.edit(okay)
 
@@ -451,7 +449,7 @@ async def lol(lel):
 @register(outgoing=True, pattern="^;_;$", ignore_unsafe=True)
 async def fun(e):
     t = ";_;"
-    for j in range(10):
+    for _ in range(10):
         t = t[:-1] + "_;"
         await e.edit(t)
 
@@ -493,10 +491,7 @@ async def copypasta(cp_e):
         elif owo.lower() == b_char:
             reply_text += "🅱️"
         else:
-            if bool(getrandbits(1)):
-                reply_text += owo.upper()
-            else:
-                reply_text += owo.lower()
+            reply_text += owo.upper() if bool(getrandbits(1)) else owo.lower()
     reply_text += choice(EMOJIS)
     await cp_e.edit(reply_text)
 
@@ -504,7 +499,7 @@ async def copypasta(cp_e):
 @register(outgoing=True, pattern="^.vapor(?: |$)(.*)")
 async def vapor(vpr):
     """ Her şeyi vaporlaştırın! """
-    reply_text = list()
+    reply_text = []
     textx = await vpr.get_reply_message()
     message = vpr.pattern_match.group(1)
     if message:
@@ -549,7 +544,7 @@ async def stretch(stret):
 @register(outgoing=True, pattern="^.zal(?: |$)(.*)")
 async def zal(zgfy):
     """ Kaos duygusunu çağırın. """
-    reply_text = list()
+    reply_text = []
     textx = await zgfy.get_reply_message()
     message = zgfy.pattern_match.group(1)
     if message:
@@ -567,7 +562,7 @@ async def zal(zgfy):
             reply_text.append(charac)
             continue
 
-        for _ in range(0, 3):
+        for _ in range(3):
             charac += choice(ZALG_LIST[randint(0,2)]).strip()
 
         reply_text.append(charac)
@@ -624,7 +619,7 @@ async def runner_lol(run):
 @register(outgoing=True, pattern="^oof$")
 async def oof(e):
     t = "oof"
-    for j in range(16):
+    for _ in range(16):
         t = t[:-1] + "of"
         await e.edit(t)
 
@@ -632,7 +627,7 @@ async def oof(e):
 @register(outgoing=True, pattern="^Oof$")
 async def Oof(e):
     t = "Oof"
-    for j in range(16):
+    for _ in range(16):
         t = t[:-1] + "of"
         await e.edit(t)
 
@@ -640,7 +635,7 @@ async def Oof(e):
 @register(outgoing=True, pattern="^skrrt$")
 async def oof(e):
     t = "skrrt"
-    for j in range(16):
+    for _ in range(16):
         t = t[:-1] + "rt"
         await e.edit(t)
 
@@ -648,7 +643,7 @@ async def oof(e):
 @register(outgoing=True, pattern="^Skrrt$")
 async def oof(e):
     t = "Skrrt"
-    for j in range(16):
+    for _ in range(16):
         t = t[:-1] + "rt"
         await e.edit(t)
 
@@ -657,8 +652,6 @@ async def oof(e):
 async def _(event):
     if event.fwd_from:
         return
-    animation_interval = 0.1
-    animation_ttl = range(0, 101)
     input_str = event.pattern_match.group(1)
     if input_str == "fuk":
         await event.edit(input_str)
@@ -668,6 +661,8 @@ async def _(event):
             "🍆  🍑️",
             "🍆🍑️💦"
         ]
+        animation_interval = 0.1
+        animation_ttl = range(101)
         for i in animation_ttl:
             await asyncio.sleep(animation_interval)
             await event.edit(animation_chars[i % 4])
@@ -733,7 +728,7 @@ async def mizahshow(e):
 async def moon(event):
     deq = deque(list("🌗🌘🌑🌒🌓🌔🌕🌖"))
     try:
-        for x in range(32):
+        for _ in range(32):
             await sleep(0.1)
             await event.edit("".join(deq))
             deq.rotate(1)
@@ -745,7 +740,7 @@ async def moon(event):
 async def clock(event):
     deq = deque(list("🕙🕘🕗🕖🕕🕔🕓🕒🕑🕐🕛"))
     try:
-        for x in range(32):
+        for _ in range(32):
             await sleep(0.1)
             await event.edit("".join(deq))
             deq.rotate(1)
@@ -756,7 +751,7 @@ async def clock(event):
 @register(outgoing=True, pattern="^.mock(?: |$)(.*)")
 async def spongemocktext(mock):
     """ Yap ve gerçek eğlenceyi bul. """
-    reply_text = list()
+    reply_text = []
     textx = await mock.get_reply_message()
     message = mock.pattern_match.group(1)
     if message:

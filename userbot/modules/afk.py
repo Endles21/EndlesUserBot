@@ -25,28 +25,27 @@ async def mention_afk(mention):
     global COUNT_MSG
     global USERS
     global ISAFKs
-    if mention.message.mentioned and not (await mention.get_sender()).bot:
-        if ISAFK:
-            if mention.sender_id not in USERS:
+    if (
+        mention.message.mentioned
+        and not (await mention.get_sender()).bot
+        and ISAFK
+    ):
+        if mention.sender_id not in USERS:
+            if AFKREASON:
+                await mention.reply(f"{PLUGIN_MESAJLAR['afk']}\
+                        \nSebep: `{AFKREASON}`")
+            else:
+                await mention.reply(PLUGIN_MESAJLAR['afk'])
+            USERS.update({mention.sender_id: 1})
+        else:
+            if USERS[mention.sender_id] % randint(2, 4) == 0:
                 if AFKREASON:
                     await mention.reply(f"{PLUGIN_MESAJLAR['afk']}\
-                        \nSebep: `{AFKREASON}`")
+                            \nSebep: `{AFKREASON}`")
                 else:
                     await mention.reply(PLUGIN_MESAJLAR['afk'])
-                USERS.update({mention.sender_id: 1})
-                COUNT_MSG = COUNT_MSG + 1
-            elif mention.sender_id in USERS:
-                if USERS[mention.sender_id] % randint(2, 4) == 0:
-                    if AFKREASON:
-                        await mention.reply(f"{PLUGIN_MESAJLAR['afk']}\
-                            \nSebep: `{AFKREASON}`")
-                    else:
-                        await mention.reply(PLUGIN_MESAJLAR['afk'])
-                    USERS[mention.sender_id] = USERS[mention.sender_id] + 1
-                    COUNT_MSG = COUNT_MSG + 1
-                else:
-                    USERS[mention.sender_id] = USERS[mention.sender_id] + 1
-                    COUNT_MSG = COUNT_MSG + 1
+            USERS[mention.sender_id] = USERS[mention.sender_id] + 1
+        COUNT_MSG = COUNT_MSG + 1
 
 
 @register(incoming=True, disable_errors=True)
@@ -73,19 +72,15 @@ async def afk_on_pm(sender):
                 else:
                     await sender.reply(PLUGIN_MESAJLAR['afk'])
                 USERS.update({sender.sender_id: 1})
-                COUNT_MSG = COUNT_MSG + 1
-            elif apprv and sender.sender_id in USERS:
+            else:
                 if USERS[sender.sender_id] % randint(2, 4) == 0:
                     if AFKREASON:
                         await sender.reply(f"{PLUGIN_MESAJLAR['afk']}\
                         \nSebep: `{AFKREASON}`")
                     else:
                         await sender.reply(PLUGIN_MESAJLAR['afk'])
-                    USERS[sender.sender_id] = USERS[sender.sender_id] + 1
-                    COUNT_MSG = COUNT_MSG + 1
-                else:
-                    USERS[sender.sender_id] = USERS[sender.sender_id] + 1
-                    COUNT_MSG = COUNT_MSG + 1
+                USERS[sender.sender_id] = USERS[sender.sender_id] + 1
+            COUNT_MSG = COUNT_MSG + 1
 
 
 @register(outgoing=True, pattern="^.afk(?: |$)(.*)", disable_errors=True)

@@ -58,11 +58,11 @@ import glob
 
 @register(outgoing=True, pattern="^.haber(?: |$)(.*)")
 async def haber(event):
-    TURLER = ["guncel", "magazin", "spor", "ekonomi", "politika", "dunya"]
     cmd = event.pattern_match.group(1)
     if len(cmd) < 1:
-            HABERURL = 'https://sondakika.haberler.com/'
+        HABERURL = 'https://sondakika.haberler.com/'
     else:
+        TURLER = ["guncel", "magazin", "spor", "ekonomi", "politika", "dunya"]
         if cmd in TURLER:
             HABERURL = f'https://sondakika.haberler.com/{cmd}'
         else:
@@ -73,11 +73,8 @@ async def haber(event):
     haber = get(HABERURL).text
     kaynak = BeautifulSoup(haber, "lxml")
     haberdiv = kaynak.find_all("div", attrs={"class":"hblnContent"})
-    i = 0
     HABERLER = ""
-    while i < 3:
+    for i in range(3):
         HABERLER += "\n\n❗️**" + haberdiv[i].find("a").text + "**\n"
         HABERLER += haberdiv[i].find("p").text
-        i += 1
-
     await event.edit(f"**Son Dakika Haberler {cmd.title()}**" + HABERLER)

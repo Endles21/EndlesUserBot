@@ -27,75 +27,74 @@ from userbot.main import PLUGIN_MESAJLAR
 async def permitpm(event):
     """ İzniniz olmadan size PM gönderenleri yasaklamak içindir. \
         Yazmaya devam eden kullanıcıları engeller. """
-    if PM_AUTO_BAN:
-        self_user = await event.client.get_me()
-        if event.is_private and event.chat_id != 777000 and event.chat_id != self_user.id and not (
+    if not PM_AUTO_BAN:
+        return
+    self_user = await event.client.get_me()
+    if event.is_private and event.chat_id != 777000 and event.chat_id != self_user.id and not (
                 await event.get_sender()).bot:
-            try:
-                from userbot.modules.sql_helper.pm_permit_sql import is_approved
-                from userbot.modules.sql_helper.globals import gvarstatus
-            except AttributeError:
-                return
-            apprv = is_approved(event.chat_id)
-            notifsoff = gvarstatus("NOTIF_OFF")
+        try:
+            from userbot.modules.sql_helper.pm_permit_sql import is_approved
+            from userbot.modules.sql_helper.globals import gvarstatus
+        except AttributeError:
+            return
+        apprv = is_approved(event.chat_id)
+        notifsoff = gvarstatus("NOTIF_OFF")
 
             # Bu bölüm basitçe akıl sağlığı kontrolüdür.
             # Eğer mesaj daha önceden onaylanmamış olarak gönderildiyse
             # flood yapmayı önlemek için unapprove mesajı göndermeyi durdurur.
-            if not apprv and event.text != PLUGIN_MESAJLAR['pm']:
-                if event.chat_id in LASTMSG:
-                    prevmsg = LASTMSG[event.chat_id]
-                    # Eğer önceden gönderilmiş mesaj farklıysa unapprove mesajı tekrardan gönderilir.
-                    if event.text != prevmsg:
-                        async for message in event.client.iter_messages(
-                                event.chat_id,
-                                from_user='me',
-                                search=PLUGIN_MESAJLAR['pm']):
-                            await message.delete()
-                        await event.reply(PLUGIN_MESAJLAR['pm'])
-                    LASTMSG.update({event.chat_id: event.text})
-                else:
+        if not apprv and event.text != PLUGIN_MESAJLAR['pm']:
+            if event.chat_id in LASTMSG:
+                prevmsg = LASTMSG[event.chat_id]
+                # Eğer önceden gönderilmiş mesaj farklıysa unapprove mesajı tekrardan gönderilir.
+                if event.text != prevmsg:
+                    async for message in event.client.iter_messages(
+                            event.chat_id,
+                            from_user='me',
+                            search=PLUGIN_MESAJLAR['pm']):
+                        await message.delete()
                     await event.reply(PLUGIN_MESAJLAR['pm'])
-                    LASTMSG.update({event.chat_id: event.text})
+            else:
+                await event.reply(PLUGIN_MESAJLAR['pm'])
+            LASTMSG.update({event.chat_id: event.text})
+            if notifsoff:
+                await event.client.send_read_acknowledge(event.chat_id)
+            if event.chat_id not in COUNT_PM:
+                COUNT_PM.update({event.chat_id: 1})
+            else:
+                COUNT_PM[event.chat_id] = COUNT_PM[event.chat_id] + 1
 
-                if notifsoff:
-                    await event.client.send_read_acknowledge(event.chat_id)
-                if event.chat_id not in COUNT_PM:
-                    COUNT_PM.update({event.chat_id: 1})
-                else:
-                    COUNT_PM[event.chat_id] = COUNT_PM[event.chat_id] + 1
+            if COUNT_PM[event.chat_id] > 4:
+                await event.respond(
+                    "`Sen benim sahibimin PM'ini spamlıyorsun, bu benim hoşuma gitmiyor.`\n"
+                    "`Şu an ENGELLENDIN ve SPAM olarak bildirildin, ileride değişiklik olmadığı sürece..`"
+                )
 
-                if COUNT_PM[event.chat_id] > 4:
-                    await event.respond(
-                        "`Sen benim sahibimin PM'ini spamlıyorsun, bu benim hoşuma gitmiyor.`\n"
-                        "`Şu an ENGELLENDIN ve SPAM olarak bildirildin, ileride değişiklik olmadığı sürece..`"
-                    )
-
-                    try:
-                        del COUNT_PM[event.chat_id]
-                        del LASTMSG[event.chat_id]
-                    except KeyError:
-                        if BOTLOG:
-                            await event.client.send_message(
-                                BOTLOG_CHATID,
-                                "PM sayacı kafayı yemiş gibi, botu lütfen yeniden başlatın.",
-                            )
-                        LOGS.info(
-                            "PM sayacı kafayı yemiş gibi, botu lütfen yeniden başlatın.")
-                        return
-
-                    await event.client(BlockRequest(event.chat_id))
-                    await event.client(ReportSpamRequest(peer=event.chat_id))
-
+                try:
+                    del COUNT_PM[event.chat_id]
+                    del LASTMSG[event.chat_id]
+                except KeyError:
                     if BOTLOG:
-                        name = await event.client.get_entity(event.chat_id)
-                        name0 = str(name.first_name)
                         await event.client.send_message(
                             BOTLOG_CHATID,
-                            "[" + name0 + "](tg://user?id=" +
-                            str(event.chat_id) + ")" +
-                            " kişisi sadece bir hayal kırıklığı idi. PM'ni meşgul ettiği için engellendi.",
+                            "PM sayacı kafayı yemiş gibi, botu lütfen yeniden başlatın.",
                         )
+                    LOGS.info(
+                        "PM sayacı kafayı yemiş gibi, botu lütfen yeniden başlatın.")
+                    return
+
+                await event.client(BlockRequest(event.chat_id))
+                await event.client(ReportSpamRequest(peer=event.chat_id))
+
+                if BOTLOG:
+                    name = await event.client.get_entity(event.chat_id)
+                    name0 = str(name.first_name)
+                    await event.client.send_message(
+                        BOTLOG_CHATID,
+                        "[" + name0 + "](tg://user?id=" +
+                        str(event.chat_id) + ")" +
+                        " kişisi sadece bir hayal kırıklığı idi. PM'ni meşgul ettiği için engellendi.",
+                    )
 
 
 @register(disable_edited=True, outgoing=True, disable_errors=True)
