@@ -256,9 +256,8 @@ async def wiki(wiki_q):
         return
     result = summary(match)
     if len(result) >= 4096:
-        file = open("wiki.txt", "w+")
-        file.write(result)
-        file.close()
+        with open("wiki.txt", "w+") as file:
+            file.write(result)
         await wiki_q.client.send_file(
             wiki_q.chat_id,
             "wiki.txt",
@@ -291,10 +290,9 @@ async def urban_dict(ud_e):
     if int(meanlen) >= 0:
         if int(meanlen) >= 4096:
             await ud_e.edit("`Sonuç çok uzun, dosya yoluyla gönderiliyor...`")
-            file = open("urbandictionary.txt", "w+")
-            file.write("Sorgu: " + query + "\n\nAnlamı: " + mean[0]["def"] +
-                       "\n\n" + "Örnek: \n" + mean[0]["example"])
-            file.close()
+            with open("urbandictionary.txt", "w+") as file:
+                file.write("Sorgu: " + query + "\n\nAnlamı: " + mean[0]["def"] +
+                           "\n\n" + "Örnek: \n" + mean[0]["example"])
             await ud_e.client.send_file(
                 ud_e.chat_id,
                 "urbandictionary.txt",
@@ -385,24 +383,18 @@ async def imdb(e):
         else:
             mov_details = ''
         credits = soup.findAll('div', 'credit_summary_item')
+        director = credits[0].a.text
         if len(credits) == 1:
-            director = credits[0].a.text
             writer = 'Not available'
             stars = 'Not available'
         elif len(credits) > 2:
-            director = credits[0].a.text
             writer = credits[1].a.text
-            actors = []
-            for x in credits[2].findAll('a'):
-                actors.append(x.text)
+            actors = [x.text for x in credits[2].findAll('a')]
             actors.pop()
             stars = actors[0] + ',' + actors[1] + ',' + actors[2]
         else:
-            director = credits[0].a.text
             writer = 'Not available'
-            actors = []
-            for x in credits[1].findAll('a'):
-                actors.append(x.text)
+            actors = [x.text for x in credits[1].findAll('a')]
             actors.pop()
             stars = actors[0] + ',' + actors[1] + ',' + actors[2]
         if soup.find('div', "inline canwrap"):
@@ -556,11 +548,13 @@ async def youtube_search(query,
         location=location,
         locationRadius=location_radius).execute()
 
-    videos = []
+    videos = [
+        search_result
+        for search_result in search_response.get("items", [])
+        if search_result["id"]["kind"] == "youtube#video"
+    ]
 
-    for search_result in search_response.get("items", []):
-        if search_result["id"]["kind"] == "youtube#video":
-            videos.append(search_result)
+
     try:
         nexttok = search_response["nextPageToken"]
         return (nexttok, videos)

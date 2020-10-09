@@ -32,10 +32,7 @@ load_dotenv("config.env")
 def paginate_help(page_number, loaded_modules, prefix):
     number_of_rows = 5
     number_of_cols = 2
-    helpable_modules = []
-    for p in loaded_modules:
-        if not p.startswith("_"):
-            helpable_modules.append(p)
+    helpable_modules = [p for p in loaded_modules if not p.startswith("_")]
     helpable_modules = sorted(helpable_modules)
     modules = [custom.Button.inline(
         "{} {}".format("🔸", x),
@@ -247,14 +244,15 @@ async def check_botlog_chatid():
             "Hesabınızın BOTLOG_CHATID grubuna mesaj gönderme yetkisi yoktur. "
             "Grup ID'sini doğru yazıp yazmadığınızı kontrol edin.")
         quit(1)
-if BOT_TOKEN != None:
+if BOT_TOKEN is None:
+    tgbot = None
+
+else:
     tgbot = TelegramClient(
         "TG_BOT_TOKEN",
         api_id=API_KEY,
         api_hash=API_HASH
     ).start(bot_token=BOT_TOKEN)
-else:
-    tgbot = None
 
 with bot:
     try:
@@ -268,7 +266,7 @@ with bot:
 
         @tgbot.on(events.NewMessage(pattern='/start'))
         async def handler(event):
-            if not event.message.from_id == uid:
+            if event.message.from_id != uid:
                 await event.reply(f'`Merhaba ben` @EndlesUserBot`! Ben sahibime (`@{me.username}`) yardımcı olmak için varım, yaani sana yardımcı olamam :/ Ama sen de bir Endles açabilirsin; Kanala bak` @EndlesUserBot')
             else:
                 await event.reply(f'`Senin için çalışıyorum :) Seni seviyorum. ❤️`')
@@ -360,10 +358,10 @@ Hesabınızı bot'a çevirebilirsiniz ve bunları kullanabilirsiniz. Unutmayın,
                 reply_pop_up_alert = help_string if help_string is not None else \
                     "{} modülü için herhangi bir döküman yazılmamış.".format(
                         modul_name)
-                await event.answer(reply_pop_up_alert, cache_time=0, alert=True)
             else:
                 reply_pop_up_alert = "Lütfen kendine bir @EndlesUserBot aç, benim mesajlarımı düzenlemeye çalışma!"
-                await event.answer(reply_pop_up_alert, cache_time=0, alert=True)
+
+            await event.answer(reply_pop_up_alert, cache_time=0, alert=True)
     except:
         LOGS.info(
             "Botunuzda inline desteği devre dışı bırakıldı. "

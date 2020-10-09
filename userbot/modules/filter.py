@@ -30,12 +30,13 @@ async def filter_incoming_handler(handler):
                 return
             for trigger in filters:
                 pro = re.fullmatch(trigger.keyword, name, flags=re.IGNORECASE)
-                if pro and trigger.f_mesg_id:
-                    msg_o = await handler.client.get_messages(
-                        entity=BOTLOG_CHATID, ids=int(trigger.f_mesg_id))
-                    await handler.reply(msg_o.message, file=msg_o.media)
-                elif pro and trigger.reply:
-                    await handler.reply(trigger.reply)
+                if pro:
+                    if trigger.f_mesg_id:
+                        msg_o = await handler.client.get_messages(
+                            entity=BOTLOG_CHATID, ids=int(trigger.f_mesg_id))
+                        await handler.reply(msg_o.message, file=msg_o.media)
+                    elif trigger.reply:
+                        await handler.reply(trigger.reply)
     except AttributeError:
         pass
 
@@ -144,10 +145,7 @@ async def filters_active(event):
     for filt in filters:
         if transact == "`Bu sohbette hiç filtre yok.`":
             transact = "Sohbetteki filtreler:\n"
-            transact += "`{}`\n".format(filt.keyword)
-        else:
-            transact += "`{}`\n".format(filt.keyword)
-
+        transact += "`{}`\n".format(filt.keyword)
     await event.edit(transact)
 
 

@@ -111,9 +111,8 @@ async def upstream(ups):
         changelog_str = f'**{ac_br} Endles için yeni güncelleme mevcut!\n\nDeğişiklikler:**\n`{changelog}`'
         if len(changelog_str) > 4096:
             await ups.edit("`Değişiklik listesi çok büyük, dosya olarak görüntülemelisin.`")
-            file = open("degisiklikler.txt", "w+")
-            file.write(changelog_str)
-            file.close()
+            with open("degisiklikler.txt", "w+") as file:
+                file.write(changelog_str)
             await ups.client.send_file(
                 ups.chat_id,
                 "degisiklikler.txt",

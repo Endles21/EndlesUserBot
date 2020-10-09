@@ -58,10 +58,11 @@ async def gdrive_upload_function(dryb):
         # https://stackoverflow.com/a/761825/4723940
         file_name = file_name.strip()
         head, tail = os.path.split(file_name)
-        if head:
-            if not os.path.isdir(os.path.join(TEMP_DOWNLOAD_DIRECTORY, head)):
-                os.makedirs(os.path.join(TEMP_DOWNLOAD_DIRECTORY, head))
-                file_name = os.path.join(head, tail)
+        if head and not os.path.isdir(
+            os.path.join(TEMP_DOWNLOAD_DIRECTORY, head)
+        ):
+            os.makedirs(os.path.join(TEMP_DOWNLOAD_DIRECTORY, head))
+            file_name = os.path.join(head, tail)
         downloaded_file_name = TEMP_DOWNLOAD_DIRECTORY + "" + file_name
         downloader = SmartDL(url, downloaded_file_name, progress_bar=False)
         downloader.start(blocking=False)
@@ -69,7 +70,7 @@ async def gdrive_upload_function(dryb):
         display_message = None
         while not downloader.isFinished():
             status = downloader.get_status().capitalize()
-            total_length = downloader.filesize if downloader.filesize else None
+            total_length = downloader.filesize or None
             downloaded = downloader.get_dl_size()
             now = time.time()
             diff = now - c_time
@@ -96,7 +97,6 @@ async def gdrive_upload_function(dryb):
                     display_message = current_message
             except Exception as e:
                 LOGS.info(str(e))
-                pass
         if downloader.isSuccessful():
             await dryb.edit(
                 "`{}` dizinine indirme başarılı. \nGoogle Drive'a yükleme başlatılıyor.."
@@ -109,8 +109,11 @@ async def gdrive_upload_function(dryb):
         if os.path.exists(input_str):
             required_file_name = input_str
             await dryb.edit(
-                "`{}` dosyası sunucuda bulundu. Google Drive'a yükleme başlatılıyor.."
-                .format(input_str))
+                "`{}` dosyası sunucuda bulundu. Google Drive'a yükleme başlatılıyor..".format(
+                    required_file_name
+                )
+            )
+
         else:
             await dryb.edit(
                 "Sunucuda dosya bulunamadı. Lütfen doğru dosya konumunu belirtin.")
@@ -128,8 +131,11 @@ async def gdrive_upload_function(dryb):
         else:
             required_file_name = downloaded_file_name
             await dryb.edit(
-                "`{}` dizinine indirme başarrılı. \nGoogle Drive'a yükleme başlatılıyor.."
-                .format(downloaded_file_name))
+                "`{}` dizinine indirme başarrılı. \nGoogle Drive'a yükleme başlatılıyor..".format(
+                    required_file_name
+                )
+            )
+
     if required_file_name:
         if G_DRIVE_AUTH_TOKEN_DATA is not None:
             with open(G_DRIVE_TOKEN_FILE, "w") as t_file:
@@ -247,7 +253,7 @@ async def show_current_gdrove_folder(event):
 # Dosyanın tipini ve ismini çağırır
 def file_ops(file_path):
     mime_type = guess_type(file_path)[0]
-    mime_type = mime_type if mime_type else "text/plain"
+    mime_type = mime_type or "text/plain"
     file_name = file_path.split("/")[-1]
     return file_name, mime_type
 
@@ -326,15 +332,13 @@ async def upload_file(http, file_path, file_name, mime_type, event, parent_id):
                     display_message = current_message
                 except Exception as e:
                     LOGS.info(str(e))
-                    pass
     file_id = response.get("id")
     # Yeni izinleri ekler.
     drive_service.permissions().insert(fileId=file_id,
                                        body=permissions).execute()
     # Dosya örneğini tanımlar ve indirmek için bağlantıyı edinir.
     file = drive_service.files().get(fileId=file_id).execute()
-    download_url = file.get("webContentLink")
-    return download_url
+    return file.get("webContentLink")
 
 
 async def create_directory(http, directory_name, parent_id):
@@ -387,8 +391,7 @@ async def gdrive_list_file_md(service, file_id):
     try:
         file = service.files().get(fileId=file_id).execute()
         # LOGS.info(dosya)
-        file_meta_data = {}
-        file_meta_data["title"] = file["title"]
+        file_meta_data = {"title": file["title"]}
         mimeType = file["mimeType"]
         file_meta_data["createdDate"] = file["createdDate"]
         if mimeType == G_DRIVE_DIR_MIME_TYPE:
@@ -437,8 +440,7 @@ async def gdrive_search(http, search_query):
         except Exception as e:
             res += str(e)
             break
-    msg = f"**Google Drive Araması**:\n`{search_query}`\n\n**Sonuçlar**\n\n{res}"
-    return msg
+    return f"**Google Drive Araması**:\n`{search_query}`\n\n**Sonuçlar**\n\n{res}"
 
 
 CMD_HELP.update({

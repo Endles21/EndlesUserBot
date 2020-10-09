@@ -108,7 +108,10 @@ async def pport(event):
 
 @register(outgoing=True, pattern="^.plist")
 async def plist(event):
-    if PLUGIN_CHANNEL_ID != None:
+    if PLUGIN_CHANNEL_ID is None:
+        event.edit("`Pluginleriniz kalıcı yüklenmiyor bu yüzden liste getiremem.`")
+
+    else:
         await event.edit("`Pluginler getiriliyor...`")
         async for plugin in event.client.iter_messages(PLUGIN_CHANNEL_ID, filter=InputMessagesFilterDocument):
             dosya = await event.client.download_media(plugin, os.getcwd() + "/userbot/modules/")
@@ -123,8 +126,6 @@ async def plist(event):
                 continue
             await event.client.send_message(PLUGIN_CHANNEL_ID, f"`Plugin Yüklendi\n\Dosya: {dosya}`")
         await event.client.send_message(PLUGIN_CHANNEL_ID, f"`Pluginler Yüklendi\n\Dosya: {dosya}`")
-    else:
-        event.edit("`Pluginleriniz kalıcı yüklenmiyor bu yüzden liste getiremem.`")
 @register(outgoing=True, pattern="^.pinstall")
 async def pins(event):
     if event.is_reply:
@@ -156,12 +157,10 @@ async def pins(event):
     if "@tgbot.on" in dosy:
         komu = re.findall(r"(pattern=\")(.*)(\")(\))", dosy)
         komutlar = ""
-        i = 0
-        while i < len(komu):
-            komut = komu[i][1]
+        for item in komu:
+            komut = item[1]
             CMD_HELP[komut] = f"Bu plugin dışarıdan botunuz için yüklenmiştir. Kullanım: {komut}"
             komutlar += komut + " "
-            i += 1
         await event.edit(f"`Modül başarıyla yüklendi! {komutlar} ile kullanmaya başlayabilirsiniz.`")
     else:
         komu = str(re.findall(r"(pattern=\")(.*)(\")(\))", dosy)[0][1]).replace("^", "").replace(".", "")
