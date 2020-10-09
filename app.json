@@ -1,20 +1,19 @@
 {
-    "name":"UserBot",
-    "description":"Endles UserBot",
-    "logo":"https://i.imgyukle.com/2020/09/18/x6quk6.jpg",
-    "keywords":[
-        "telegram",
-        "userbot",
-        "Endles",
-        "plugin",
-        "modular",
-        "productivity"
-    ],
-    "repository":"https://github.com/Endles21/EndlesUserBot",
-    "website":"https://Endles21.tech",
-    "success_url":"https://t.me/EndlesSupport",
-    "stack":"container",
-    "env":{
+  "name": "EndlesBot",
+  "description": "Endles UserBot",
+  "logo": "https://i.imgyukle.com/2020/09/18/x6quk6.jpg",
+  "keywords": [
+    "telegram",
+    "userbot",
+	"endles",
+    "plugin",
+    "modular",
+    "productivity"
+  ],
+  "repository": "https://github.com/Endles21/EndlesUserBot",
+  "success_url": "https://t.me/EndlesSupport",
+  "stack": "container",
+  "env": {
         "API_KEY":{
             "description":"Bu değeri my.telegram.org adresinden alın.",
             "required":true
